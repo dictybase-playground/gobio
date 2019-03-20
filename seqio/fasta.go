@@ -13,11 +13,17 @@
 //	)
 //
 //  func main() {
-//		 r := seqio.NewFastaReader(os.Args[1])
+//		 r,err := seqio.NewFastaReader(os.Args[1])
+//		 if err != nil {
+//			log.Fatal(err)
+//       }
 //		 for r.HasEntry()  {
 //			fasta := r.NextEentry()
 //			fmt.Printf("id:%s\nSequence:%s\n",f.Id,f.Sequence)
 //		 }
+//       if err := r.Err(); err != nil {
+//          fmt.Fprintf(os.Stderr,"error in reading file %s",err)
+//       }
 //  }
 package seqio
 
