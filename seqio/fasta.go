@@ -7,7 +7,7 @@
 //  package main
 //  import (
 //		"fmt"
-//		"github.com/cybersiddhu/gobio/seqio"
+//		"github.com/dictybase-playground/gobio/seqio"
 //		"os"
 //		"log"
 //	)
