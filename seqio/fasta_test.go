@@ -18,7 +18,10 @@ func TestSingleFasta(t *testing.T) {
 	}
 
 	mfasta := filepath.Join(dir, "single.fa")
-	reader := NewFastaReader(mfasta)
+	reader, err := NewFastaReader(mfasta)
+	if err != nil {
+		t.Fatalf("error in reading fasta file %s", err)
+	}
 	if !reader.HasEntry() {
 		t.Errorf("Did not get expected iteration %s", err)
 	}
@@ -34,6 +37,9 @@ func TestSingleFasta(t *testing.T) {
 	if !seqRgxp.Match(entry.Sequence) {
 		t.Error("Expected to match sequence")
 	}
+	if err := reader.Err(); err != nil {
+		t.Errorf("error in reading lines %s", err)
+	}
 }
 
 func TestMultiFasta(t *testing.T) {
@@ -43,7 +49,10 @@ func TestMultiFasta(t *testing.T) {
 	}
 
 	mfasta := filepath.Join(dir, "multi.fa")
-	reader := NewFastaReader(mfasta)
+	reader, err := NewFastaReader(mfasta)
+	if err != nil {
+		t.Fatalf("error in reading fasta file %s", err)
+	}
 	for i := 0; i <= 3; i++ {
 		if !reader.HasEntry() {
 			t.Error("Did not get expected iteration")
@@ -60,5 +69,8 @@ func TestMultiFasta(t *testing.T) {
 		if !seqRgxp.Match(entry.Sequence) {
 			t.Error("Expected to match sequence")
 		}
+	}
+	if err := reader.Err(); err != nil {
+		t.Errorf("error in reading lines %s", err)
 	}
 }
