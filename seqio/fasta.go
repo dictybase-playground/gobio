@@ -24,8 +24,8 @@ package seqio
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"io"
-	"log"
 	"os"
 )
 
@@ -45,14 +45,21 @@ type FastaReader struct {
 	sequence   []byte
 	exhausted  bool
 	fasta      *Fasta
+	err        error
 }
 
-//Returns the next fasta entry
+//NextEntry the next fasta entry
 func (f *FastaReader) NextEntry() *Fasta {
 	return f.fasta
 }
 
-//Checks for next fasta entry. Should be called before reading the next entry
+//Err returns any associated error that happened during the read
+func (f *FastaReader) Err() error {
+	return f.err
+}
+
+//HasEntry checks for next fasta entry.
+//Should be called before reading the next entry
 func (f *FastaReader) HasEntry() bool {
 	for {
 		line, err := f.reader.ReadBytes('\n')
@@ -65,7 +72,8 @@ func (f *FastaReader) HasEntry() bool {
 				}
 				return false
 			} else {
-				log.Fatal(err)
+				f.err = err
+				return false
 			}
 		}
 		if bytes.HasPrefix(line, []byte(">")) {
@@ -85,13 +93,14 @@ func (f *FastaReader) HasEntry() bool {
 	return false
 }
 
-//Create a new Fastareader
-func NewFastaReader(file string) *FastaReader {
+//NewFastareader creates a new reader for fasta file
+func NewFastaReader(file string) (*FastaReader, error) {
+	fr := new(FastaReader)
 	reader, err := os.Open(file)
 	if err != nil {
-		log.Fatal(err)
+		return fr, fmt.Errorf("error in reading %s file", file)
 	}
 	return &FastaReader{
 		reader: bufio.NewReader(reader),
-	}
+	}, nil
 }
